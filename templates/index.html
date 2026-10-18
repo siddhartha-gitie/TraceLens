@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8f5">
+    <title>TraceLens — Incident Investigation</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app.js" defer></script>
+</head>
+
+<body>
+    <header class="topbar">
+        <a class="brand" href="/">
+            <span class="brand-mark">T</span>
+            <span>TraceLens</span>
+        </a>
+        <span class="local-status">
+            <span class="status-dot"></span>
+            Local analysis
+        </span>
+    </header>
+
+    <main class="page">
+        <section class="intro">
+            <p class="eyebrow">APPLICATION DIAGNOSTICS</p>
+            <h1>Find out what went wrong.</h1>
+            <p class="subtitle">
+                Examine application logs, trace related events, and investigate
+                possible causes with evidence from the original logs.
+            </p>
+        </section>
+
+        <section class="workspace">
+            <div class="section-heading">
+                <div>
+                    <h2>New investigation</h2>
+                    <p>Provide the logs from the affected application or service.</p>
+                </div>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Log input method">
+                <button class="tab active" id="paste-tab" role="tab" aria-selected="true" aria-controls="paste-panel"
+                    data-mode="paste">Paste logs</button>
+                <button class="tab" id="upload-tab" role="tab" aria-selected="false" aria-controls="upload-panel"
+                    data-mode="upload">Upload file</button>
+            </div>
+
+            <form id="investigation-form">
+                <section id="paste-panel" class="input-panel">
+                    <label for="log-text">Log content</label>
+                    <textarea id="log-text" name="log_text" placeholder="Paste your application logs here..."
+                        spellcheck="false"></textarea>
+                    <div class="input-footer">
+                        <span id="character-count">0 characters</span>
+                        <button type="button" class="text-button" id="clear-logs">
+                            Clear
+                        </button>
+                    </div>
+                </section>
+
+                <section id="upload-panel" class="input-panel hidden">
+                    <label for="log-file">Log file</label>
+                    <label class="drop-zone" for="log-file" id="drop-zone">
+                        <span class="upload-icon">↑</span>
+                        <strong id="file-label">Choose a file or drop it here</strong>
+                        <span class="muted">LOG or TXT · Maximum 5 MB</span>
+                        <input type="file" id="log-file" accept=".log,.txt,text/plain">
+                    </label>
+                    <p class="file-help" id="file-help">
+                        Your file will be processed by the local application.
+                    </p>
+                </section>
+
+                <div id="error-message" class="message error hidden" role="alert"></div>
+
+                <div class="form-actions">
+                    <p>Supported log format is required for this version.</p>
+                    <button type="submit" class="primary-button" id="analyze-button">
+                        <span id="button-label">Investigate incident</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section id="loading-section" class="loading hidden" aria-live="polite">
+            <span class="spinner"></span>
+            <div>
+                <strong>Investigating incident</strong>
+                <p>Analyzing events and checking supporting evidence. This may take a moment.</p>
+            </div>
+        </section>
+
+        <section id="results-section" class="results hidden">
+            <div class="results-heading">
+                <div>
+                    <p class="eyebrow">INVESTIGATION RESULTS</p>
+                    <h2 id="result-filename">Incident report</h2>
+                    <p id="result-description" class="subtitle"></p>
+                </div>
+                <button type="button" class="secondary-button" id="download-report">
+                    Download JSON ↓
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <span>Events analyzed</span>
+                    <strong id="event-count">—</strong>
+                </article>
+                <article class="stat-card">
+                    <span>Errors detected</span>
+                    <strong id="error-count">—</strong>
+                </article>
+                <article class="stat-card">
+                    <span>Services involved</span>
+                    <strong id="service-count">—</strong>
+                </article>
+                <article class="stat-card">
+                    <span>Evidence checked</span>
+                    <strong id="evidence-count">—</strong>
+                </article>
+            </div>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Incident summary</h3>
+                    <span class="tag">AI-assisted</span>
+                </div>
+                <p id="incident-summary" class="report-text"></p>
+                <div class="confidence-row">
+                    <span>Assessment confidence</span>
+                    <strong id="confidence">—</strong>
+                </div>
+                <p class="disclaimer">
+                    Confidence is an estimate, not a statistical probability.
+                    Verify proposed causes before making production changes.
+                </p>
+            </article>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Likely causes</h3>
+                </div>
+                <div id="likely-causes"></div>
+            </article>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Evidence verification</h3>
+                    <span id="verification-status" class="tag"></span>
+                </div>
+                <p class="muted">
+                    A matching source line does not prove that a causal
+                    interpretation is correct.
+                </p>
+                <div id="verified-evidence"></div>
+                <div id="unsupported-evidence"></div>
+            </article>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Recommended checks</h3>
+                </div>
+                <ul id="recommended-checks" class="report-list"></ul>
+            </article>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Alternative explanations</h3>
+                </div>
+                <ul id="alternatives" class="report-list"></ul>
+            </article>
+
+            <article class="report-card">
+                <div class="card-heading">
+                    <h3>Event timeline</h3>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Level</th>
+                                <th>Service</th>
+                                <th>Event</th>
+                                <th>Line</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timeline-body"></tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <footer class="footer">
+            <span>TraceLens</span>
+            <span>Local log analysis · Verify before acting</span>
+        </footer>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+{
+  "filename": "pasted_logs.txt",
+  "analysis": {
+    "event_count": 10,
+    "error_count": 3,
+    "error_summary": {
+      "write_failed": 1,
+      "job_failed": 2
+    },
+    "configuration_changes": [],
+    "warnings_before_errors": [
+      {
+        "warning_line": 4,
+        "warning_event": "disk_usage_high",
+        "error_line": 7,
+        "error_event": "write_failed",
+        "time_difference_seconds": 25
+      },
+      {
+        "warning_line": 6,
+        "warning_event": "disk_usage_high",
+        "error_line": 7,
+        "error_event": "write_failed",
+        "time_difference_seconds": 5
+      },
+      {
+        "warning_line": 4,
+        "warning_event": "disk_usage_high",
+        "error_line": 8,
+        "error_event": "job_failed",
+        "time_difference_seconds": 26
+      },
+      {
+        "warning_line": 6,
+        "warning_event": "disk_usage_high",
+        "error_line": 8,
+        "error_event": "job_failed",
+        "time_difference_seconds": 6
+      },
+      {
+        "warning_line": 4,
+        "warning_event": "disk_usage_high",
+        "error_line": 9,
+        "error_event": "job_failed",
+        "time_difference_seconds": 30
+      },
+      {
+        "warning_line": 6,
+        "warning_event": "disk_usage_high",
+        "error_line": 9,
+        "error_event": "job_failed",
+        "time_difference_seconds": 10
+      }
+    ],
+    "timeline": [
+      {
+        "timestamp": "2026-10-14T14:30:00",
+        "level": "INFO",
+        "service": "worker",
+        "event": "service_started",
+        "details": {},
+        "line_number": 2
+      },
+      {
+        "timestamp": "2026-10-14T14:30:02",
+        "level": "INFO",
+        "service": "storage",
+        "event": "disk_usage_reported",
+        "details": {
+          "usage_pct": "72"
+        },
+        "line_number": 3
+      },
+      {
+        "timestamp": "2026-10-14T14:31:00",
+        "level": "WARN",
+        "service": "storage",
+        "event": "disk_usage_high",
+        "details": {
+          "usage_pct": "91"
+        },
+        "line_number": 4
+      },
+      {
+        "timestamp": "2026-10-14T14:31:15",
+        "level": "INFO",
+        "service": "worker",
+        "event": "job_started",
+        "details": {
+          "job_id": "8421"
+        },
+        "line_number": 5
+      },
+      {
+        "timestamp": "2026-10-14T14:31:20",
+        "level": "WARN",
+        "service": "storage",
+        "event": "disk_usage_high",
+        "details": {
+          "usage_pct": "97"
+        },
+        "line_number": 6
+      },
+      {
+        "timestamp": "2026-10-14T14:31:25",
+        "level": "ERROR",
+        "service": "storage",
+        "event": "write_failed",
+        "details": {
+          "error_code": "ENOSPC"
+        },
+        "line_number": 7
+      },
+      {
+        "timestamp": "2026-10-14T14:31:26",
+        "level": "ERROR",
+        "service": "worker",
+        "event": "job_failed",
+        "details": {
+          "job_id": "8421"
+        },
+        "line_number": 8
+      },
+      {
+        "timestamp": "2026-10-14T14:31:30",
+        "level": "ERROR",
+        "service": "worker",
+        "event": "job_failed",
+        "details": {
+          "job_id": "8422"
+        },
+        "line_number": 9
+      },
+      {
+        "timestamp": "2026-10-14T14:31:35",
+        "level": "WARN",
+        "service": "worker",
+        "event": "queue_backlog",
+        "details": {
+          "queue_size": "150"
+        },
+        "line_number": 10
+      },
+      {
+        "timestamp": "2026-10-14T14:32:00",
+        "level": "INFO",
+        "service": "worker",
+        "event": "health_check",
+        "details": {
+          "status": "degraded"
+        },
+        "line_number": 11
+      }
+    ]
+  },
+  "report": {
+    "incident_summary": "The incident involves multiple disk usage high warnings followed by write_failed and job_failed errors, culminating in a degraded worker health check status. The disk usage high warnings occurred before the errors, suggesting a potential issue with disk space leading to the failures.",
+    "likely_causes": [
+      {
+        "hypothesis": "The disk space on the storage system was critically low, causing the write_failed and job_failed errors.",
+        "supporting_evidence": [
+          {
+            "claim": "The source records disk_usage_high with usage_pct=91",
+            "line_number": 4
+          },
+          {
+            "claim": "The source records disk_usage_high with usage_pct=97",
+            "line_number": 6
+          },
+          {
+            "claim": "The source records write_failed with error_code=ENOSPC",
+            "line_number": 7
+          },
+          {
+            "claim": "The source records job_failed with job_id=8421",
+            "line_number": 8
+          },
+          {
+            "claim": "The source records job_failed with job_id=8422",
+            "line_number": 9
+          }
+        ],
+        "missing_evidence": [
+          "Details on the exact configuration settings of the storage system, such as the threshold for disk usage before an error is triggered."
+        ]
+      }
+    ],
+    "alternative_explanations": [
+      "The errors might be related to a temporary network issue affecting the storage system, or a configuration change that was not recorded in the provided logs."
+    ],
+    "recommended_checks": [
+      "Check the storage system configuration to verify the disk usage threshold for triggering errors. Investigate the network connectivity to the storage system.",
+      "Review the worker configuration to ensure it is not causing the job failures. Check for any recent configuration changes that could have affected the worker's behavior."
+    ],
+    "confidence": "medium"
+  },
+  "validation": {
+    "verified_claims": [
+      {
+        "claim": "The source records disk_usage_high with usage_pct=91",
+        "line_number": 4,
+        "actual_event": "disk_usage_high",
+        "actual_service": "storage",
+        "actual_level": "WARN",
+        "fields_checked": [
+          "usage_pct"
+        ],
+        "status": "verified",
+        "reason": "The cited event matches the source. Any identifiable field values in the claim also match the parsed log record."
+      },
+      {
+        "claim": "The source records disk_usage_high with usage_pct=97",
+        "line_number": 6,
+        "actual_event": "disk_usage_high",
+        "actual_service": "storage",
+        "actual_level": "WARN",
+        "fields_checked": [
+          "usage_pct"
+        ],
+        "status": "verified",
+        "reason": "The cited event matches the source. Any identifiable field values in the claim also match the parsed log record."
+      },
+      {
+        "claim": "The source records write_failed with error_code=ENOSPC",
+        "line_number": 7,
+        "actual_event": "write_failed",
+        "actual_service": "storage",
+        "actual_level": "ERROR",
+        "fields_checked": [
+          "error_code"
+        ],
+        "status": "verified",
+        "reason": "The cited event matches the source. Any identifiable field values in the claim also match the parsed log record."
+      },
+      {
+        "claim": "The source records job_failed with job_id=8421",
+        "line_number": 8,
+        "actual_event": "job_failed",
+        "actual_service": "worker",
+        "actual_level": "ERROR",
+        "fields_checked": [
+          "job_id"
+        ],
+        "status": "verified",
+        "reason": "The cited event matches the source. Any identifiable field values in the claim also match the parsed log record."
+      },
+      {
+        "claim": "The source records job_failed with job_id=8422",
+        "line_number": 9,
+        "actual_event": "job_failed",
+        "actual_service": "worker",
+        "actual_level": "ERROR",
+        "fields_checked": [
+          "job_id"
+        ],
+        "status": "verified",
+        "reason": "The cited event matches the source. Any identifiable field values in the claim also match the parsed log record."
+      }
+    ],
+    "mismatched_claims": [],
+    "partially_verified_claims": [],
+    "unsupported_claims": [],
+    "claims_checked": 5,
+    "validation_note": "Validation checks cited source lines, identifiable event names, and explicit field values. A matching claim does not prove that the proposed cause is correct."
+  }
+}

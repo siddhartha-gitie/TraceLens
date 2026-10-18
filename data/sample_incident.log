@@ -1,0 +1,36 @@
+//test_logs1
+
+2026-10-16 14:00:00 INFO service=database event=service_started
+2026-10-16 14:00:05 INFO service=database event=pool_configured pool_size=20
+2026-10-16 14:01:00 INFO service=database event=pool_config_changed old_size=20 new_size=10
+2026-10-16 14:01:05 INFO service=database event=health_check status=healthy
+
+
+//test_log2
+
+2026-10-14 14:30:00 INFO service=worker event=service_started
+2026-10-14 14:30:02 INFO service=storage event=disk_usage_reported usage_pct=72
+2026-10-14 14:31:00 WARN service=storage event=disk_usage_high usage_pct=91
+2026-10-14 14:31:15 INFO service=worker event=job_started job_id=8421
+2026-10-14 14:31:20 WARN service=storage event=disk_usage_high usage_pct=97
+2026-10-14 14:31:25 ERROR service=storage event=write_failed error_code=ENOSPC
+2026-10-14 14:31:26 ERROR service=worker event=job_failed job_id=8421
+2026-10-14 14:31:30 ERROR service=worker event=job_failed job_id=8422
+2026-10-14 14:31:35 WARN service=worker event=queue_backlog queue_size=150
+2026-10-14 14:32:00 INFO service=worker event=health_check status=degraded
+
+
+
+
+//test_log3
+
+2026-10-17 15:20:00 INFO service=checkout event=service_started
+2026-10-17 15:20:02 INFO service=payment event=dependency_connected
+2026-10-17 15:20:10 INFO service=payment event=request_received request_id=PAY101
+2026-10-17 15:20:12 WARN service=payment event=response_time_high latency_ms=2200
+2026-10-17 15:20:15 WARN service=payment event=response_time_high latency_ms=4100
+2026-10-17 15:20:18 ERROR service=payment event=upstream_timeout timeout_ms=5000
+2026-10-17 15:20:19 ERROR service=checkout event=payment_failed request_id=PAY101
+2026-10-17 15:20:22 WARN service=checkout event=retry_limit_near attempts=3
+2026-10-17 15:20:25 ERROR service=checkout event=request_failed status=502
+2026-10-17 15:20:30 INFO service=checkout event=health_check status=degraded

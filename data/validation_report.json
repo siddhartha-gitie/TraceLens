@@ -1,0 +1,31 @@
+{
+  "verified_claims": [
+    {
+      "claim": "Line 4: 'pool_config_changed' with old size '20' and new size '5'",
+      "line_number": 4,
+      "actual_event": "pool_config_changed",
+      "actual_service": "database",
+      "actual_level": "INFO",
+      "status": "Source line exists"
+    },
+    {
+      "claim": "Line 5: 'pool_wait_time_high' with wait time '1200' ms",
+      "line_number": 5,
+      "actual_event": "pool_wait_time_high",
+      "actual_service": "database",
+      "actual_level": "WARN",
+      "status": "Source line exists"
+    },
+    {
+      "claim": "Line 6: 'connection_timeout'",
+      "line_number": 6,
+      "actual_event": "connection_timeout",
+      "actual_service": "database",
+      "actual_level": "ERROR",
+      "status": "Source line exists"
+    }
+  ],
+  "unsupported_claims": [],
+  "claims_checked": 3,
+  "validation_note": "A matching log line confirms that the source exists, not that the AI's interpretation is correct."
+}
